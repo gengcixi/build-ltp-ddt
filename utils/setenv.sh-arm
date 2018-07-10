@@ -1,0 +1,114 @@
+#!/bin/bash
+
+TOPDIR=$(dirname `readlink -f $0`)
+ENVDIR=${TOPDIR}/alsa
+OUTPUTDIR=${TOPDIR}/ltp-ddt/output
+KERNEL_SRC=${TOPDIR}/linux-2.6.39
+#KERNEL_SRC=/home/local/SPREADTRUM/cixi.geng/project/hikey-linux
+CROSS_COMPILE=arm-linux-gnueabi-
+
+# check return error
+check_err()
+{
+    if [ $? -ne 0  ]; then
+        echo Error: $* >&2
+        exit 2
+    fi
+}
+
+if [ ! -d ${TOPDIR}/alsa ]; then
+{
+    # prepare alsa lib 
+    mkdir ${TOPDIR}/alsa
+}
+fi
+cd ${ENVDIR}
+if [ ! -e libasound2_1.0.20-r0.3_armv7a.ipk ]; then
+    wget http://www.arago-project.org/files/releases/2009.11/ipk/armv7a/libasound2_1.0.20-r0.3_armv7a.ipk
+else 
+    echo "====libasound2_1.0.20-r0.3_armv7a.ipk exited===="
+fi
+
+
+if [ ! -e alsa-lib-dev_1.0.20-r0.3_armv7a.ipk ]; then
+    wget http://www.arago-project.org/files/releases/2009.11/ipk/armv7a/alsa-lib-dev_1.0.20-r0.3_armv7a.ipk
+else 
+    echo "====alsa-lib-dev_1.0.20-r0.3_armv7a.ipk exited===="
+fi
+
+if [ ! -e alsa-dev_1.0.20-r0.3_armv7a.ipk ]; then
+    wget http://www.arago-project.org/files/releases/2009.11/ipk/armv7a/alsa-dev_1.0.20-r0.3_armv7a.ipk
+else 
+    echo "====alsa-dev_1.0.20-r0.3_armv7a.ipk  exited===="
+fi
+ar -p alsa-dev_1.0.20-r0.3_armv7a.ipk data.tar.gz | tar -zx
+ar -p libasound2_1.0.20-r0.3_armv7a.ipk data.tar.gz | tar -zx
+ar -p alsa-lib-dev_1.0.20-r0.3_armv7a.ipk data.tar.gz | tar -zx
+export	  ALSA_INCPATH=${ENVDIR}/usr/include
+export	  ALSA_LIBPATH=${ENVDIR}/usr/lib
+
+while [ ! -d ${TOPDIR}/linux/ ]; do
+    {
+    # prepare hikey linux source code
+    cd $TOPDIR
+    git clone https://github.com/96boards-hikey/linux.git
+    }
+done
+    echo "========linux src exited========"
+cd $KERNEL_SRC
+make CROSS_COMPILE=arm-linux-gnueabi- O=build-arm distclean
+make CROSS_COMPILE=arm-linux-gnueabi- O=build-arm 
+make CROSS_COMPILE=arm-linux-gnueabi- O=build-arm headers_install
+
+# prepare ddt source code
+cd $TOPDIR
+if [ ! -d ${TOPDIR}/ltp-ddt ]; then
+    {
+        cd $TOPDIR 
+    #git clone http://arago-project.org/git/projects/test-automation/ltp-ddt.git
+    git checkout .
+    cd  $TOPDIR/ltp-ddt/testcases/ddt/alsa_test_suite/src/testcases
+    sed -i 's/O_CREAT/O_CREAT,0666/g' st_alsa_capture_file_test.c
+    cd $TOPDIR/ltp-ddt/testcases/ddt/filesystem_test_suite/src/testcases/
+    sed -i 's/O_CREAT/O_CREAT,0666/g' st_filesystem_copy_file.c
+    cd $TOPDIR/ltp-ddt/testcases/ddt/filesystem_test_suite/src/testcases/
+    sed -i 's/O_CREAT/O_CREAT,0666/g' st_filesystem_write_to_file.c
+    cd $TOPDIR/ltp-ddt 
+     testcases/ddt/ipc_test_suite -r    
+    }
+fi
+ 
+cd $TOPDIR/ltp-ddt 
+make O=$OUTPUTDIR autotools
+platform_file=hikey
+platform=arm-linux
+
+# configure 
+echo "==== start confirgure===="
+./configure \
+	CC=${CROSS_COMPILE}gcc \
+	CROSS_COMPILER=${CROSS_COMPILE}gcc \
+	AR=${CROSS_COMPILE}ar \
+	STRIP=${CROSS_COMPILE}strip \
+	RANLIB=${CROSS_COMPILE}ranlib \
+	LD=${CROSS_COMPILE}ld \
+	--build=i686-pc-linux-gnu \
+	--target=$platform --host=$platform \
+	--prefix=$OUTPUTDIR/ltp-ddt
+echo "==== confirgure done ===="
+#make 
+
+echo "==== start make ===="
+
+make O=$OUTPUTDIR SKIP_IDCHECK=1 \
+	KERNEL_INC=$KERNEL_SRC/build-arm/include \
+	KERNEL_USR_INC=$KERNEL_SRC/build-arm/usr/include \
+	PLATFORM=$platform_file clean
+
+make O=$OUTPUTDIR SKIP_IDCHECK=1 \
+	KERNEL_INC=$KERNEL_SRC/build-arm/include \
+	KERNEL_USR_INC=$KERNEL_SRC/build-arm/usr/include \
+	PLATFORM=$platform_file
+
+#install
+make DESTDIR=$OUTPUTDIR SKIP_IDCHECK=1 PLATFORM=hikey install

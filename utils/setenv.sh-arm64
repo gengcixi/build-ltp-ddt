@@ -1,0 +1,78 @@
+#!/bin/bash
+
+TOPDIR=$(dirname `readlink -f $0`)
+ENVDIR=/home/gcx/workspace/alsa/arm64/usr/
+OUTPUTDIR=${TOPDIR}/ltp-ddt/output
+
+KERNEL_SRC=${TOPDIR}/kernel/linux
+CROSS_COMPILE=aarch64-linux-gnu-
+
+# prepare alsa lib 
+cd ${ENVDIR}
+
+export	  ALSA_INCPATH=${ENVDIR}/include
+export	  ALSA_LIBPATH=${ENVDIR}/lib
+echo $ALSA_INCPATH
+echo $ALSA_LIBPATH
+
+# prepare hikey linux source code
+if [ ! -d ${TOPDIR}/kernel/linux ];then
+    cd $TOPDIR
+    git clone https://github.com/96boards-hikey/linux.git
+fi
+cd $KERNEL_SRC
+make CROSS_COMPILE=aarch64-linux-gnu- O=build-arm64 distclean
+make CROSS_COMPILE=aarch64-linux-gnu- O=build-arm64 
+make CROSS_COMPILE=aarch64-linux-gnu- O=build-arm64 headers_install
+
+# prepare ddt source code
+if [ ! -d ${TOPDIR}/ltp-ddt ];then
+    cd $TOPDIR
+    git clone http://arago-project.org/git/projects/test-automation/ltp-ddt.git
+fi
+cd $TOPDIR/ltp-ddt
+git checkout .
+cd  $TOPDIR/ltp-ddt/testcases/ddt/alsa_test_suite/src/testcases
+sed -i 's/O_CREAT/O_CREAT,0666/g' st_alsa_capture_file_test.c
+cd $TOPDIR/ltp-ddt/testcases/ddt/filesystem_test_suite/src/testcases/
+sed -i 's/O_CREAT/O_CREAT,0666/g' st_filesystem_copy_file.c
+cd $TOPDIR/ltp-ddt/testcases/ddt/filesystem_test_suite/src/testcases/
+sed -i 's/O_CREAT/O_CREAT,0666/g' st_filesystem_write_to_file.c
+cd $TOPDIR/ltp-ddt 
+rm testcases/ddt/ipc_test_suite -r
+
+ 
+make O=$OUTPUTDIR autotools
+platform_file=hikey
+platform=aarch64-linux
+
+# configure 
+echo "==== start confirgure===="
+./configure \
+	CC=${CROSS_COMPILE}gcc \
+	CROSS_COMPILER=${CROSS_COMPILE}gcc \
+	AR=${CROSS_COMPILE}ar \
+	STRIP=${CROSS_COMPILE}strip \
+	RANLIB=${CROSS_COMPILE}ranlib \
+	LD=${CROSS_COMPILE}ld \
+	--build=i686-pc-linux-gnu \
+	--target=$platform --host=$platform \
+	--prefix=$OUTPUTDIR/ltp-ddt
+echo "==== confirgure done ===="
+#make 
+
+echo "==== start make ===="
+
+make O=$OUTPUTDIR SKIP_IDCHECK=1 \
+	KERNEL_INC=$KERNEL_SRC/build-arm64/include \
+	KERNEL_USR_INC=$KERNEL_SRC/build-arm64/usr/include \
+	PLATFORM=$platform_file clean
+
+make O=$OUTPUTDIR SKIP_IDCHECK=1 \
+	KERNEL_INC=$KERNEL_SRC/build-arm64/include \
+	KERNEL_USR_INC=$KERNEL_SRC/build-arm64/usr/include \
+	PLATFORM=$platform_file
+
+#install
+make DESTDIR=$OUTPUTDIR SKIP_IDCHECK=1 PLATFORM=hikey install
+
