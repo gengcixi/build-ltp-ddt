@@ -1,0 +1,27 @@
+From 22265c45ae006f9904a57524130f91010f5f88ad Mon Sep 17 00:00:00 2001
+From: cixi <gengcx@spreadst.com>
+Date: Mon, 16 Jul 2018 11:21:19 +0800
+Subject: [PATCH 3/3] st_filesystem_write_to_file.c:when has O_CREAT, the third
+ parameter must be set for specify the file permission
+
+Signed-off-by: cixi <gengcx@spreadst.com>
+---
+ .../filesystem_test_suite/src/testcases/st_filesystem_write_to_file.c   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/testcases/ddt/filesystem_test_suite/src/testcases/st_filesystem_write_to_file.c b/testcases/ddt/filesystem_test_suite/src/testcases/st_filesystem_write_to_file.c
+index 80e8e24..e194dc2 100644
+--- a/testcases/ddt/filesystem_test_suite/src/testcases/st_filesystem_write_to_file.c
++++ b/testcases/ddt/filesystem_test_suite/src/testcases/st_filesystem_write_to_file.c
+@@ -89,7 +89,7 @@ int st_filesystem_performance_write_test(struct st_filesystem_testparams *info,
+ 	}
+ 	TEST_PRINT_TRC("mmap srcfile ");
+ 
+-	fdes = open((const char *)file_ptr, O_WRONLY | O_CREAT);
++	fdes = open((const char *)file_ptr, O_WRONLY | O_CREAT,0666);
+ 	if (-1 == fdes) {
+ 		perror("\n open");
+ 		TEST_PRINT_ERR("file open failed ");
+-- 
+1.9.1
+
