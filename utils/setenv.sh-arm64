@@ -64,5 +64,5 @@ make O=$OUTPUTDIR SKIP_IDCHECK=1 \
 	PLATFORM=$platform_file
 
 #install
-make DESTDIR=$OUTPUTDIR SKIP_IDCHECK=1 PLATFORM=${platform_file} install
+make O=$OUTPUTDIR SKIP_IDCHECK=1 PLATFORM=${platform_file} install
 
