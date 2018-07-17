@@ -3,7 +3,7 @@
 TOPDIR=$(dirname `readlink -f $0`)
 ARCH=arm64
 ENVDIR=${TOPDIR}/alsa/${ARCH}/usr
-OUTPUTDIR=${TOPDIR}/output
+OUTPUTDIR=${TOPDIR}/output/${ARCH}
 
 CROSS_COMPILE=aarch64-linux-gnu-
 
