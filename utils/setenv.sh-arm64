@@ -20,15 +20,22 @@ if [ ! -d ${TOPDIR}/ltp-ddt ];then
     git clone http://arago-project.org/git/projects/test-automation/ltp-ddt.git
 fi
 cd $TOPDIR/ltp-ddt
-git checkout .
-cd  $TOPDIR/ltp-ddt/testcases/ddt/alsa_test_suite/src/testcases
-sed -i 's/O_CREAT/O_CREAT,0666/g' st_alsa_capture_file_test.c
-cd $TOPDIR/ltp-ddt/testcases/ddt/filesystem_test_suite/src/testcases/
-sed -i 's/O_CREAT/O_CREAT,0666/g' st_filesystem_copy_file.c
-cd $TOPDIR/ltp-ddt/testcases/ddt/filesystem_test_suite/src/testcases/
-sed -i 's/O_CREAT/O_CREAT,0666/g' st_filesystem_write_to_file.c
+git pull && git checkout .
+#cd  $TOPDIR/ltp-ddt/testcases/ddt/alsa_test_suite/src/testcases
+#sed -i 's/O_CREAT/O_CREAT,0666/g' st_alsa_capture_file_test.c
+#cd $TOPDIR/ltp-ddt/testcases/ddt/filesystem_test_suite/src/testcases/
+#sed -i 's/O_CREAT/O_CREAT,0666/g' st_filesystem_copy_file.c
+#cd $TOPDIR/ltp-ddt/testcases/ddt/filesystem_test_suite/src/testcases/
+#sed -i 's/O_CREAT/O_CREAT,0666/g' st_filesystem_write_to_file.c
 cd $TOPDIR/ltp-ddt 
 #rm testcases/ddt/ipc_test_suite -r
+
+## git apply patch 
+cd $TOPDIR/ltp-ddt 
+git am -s < ${TOPDIR}/patches/0001-st_alsa_capture_file_test.c-when-has-O_CREAT.patch
+git am -s < ${TOPDIR}/patches/0002-st_filesystem_copy_file.c-when-has-O_CREAT.patch
+git am -s < ${TOPDIR}/patches/0003-st_filesystem_write_to_file.c-when-has-O_CREAT.patch
+
 
  
 cd $TOPDIR/ltp-ddt
