@@ -1,7 +1,7 @@
-From ca541276aaedc0dfa8b978230f7159caa7ac969d Mon Sep 17 00:00:00 2001
+From 4ee083bd304b8363bfe55516fcaa0581fdb6978a Mon Sep 17 00:00:00 2001
 From: cixi <gengcx@spreadst.com>
 Date: Mon, 16 Jul 2018 11:19:40 +0800
-Subject: [PATCH 2/3] st_filesystem_copy_file.c:when has O_CREAT, the third
+Subject: [PATCH] st_filesystem_copy_file.c:when has O_CREAT, the third
  parameter must be set for specify the file permission
 
 Signed-off-by: cixi <gengcx@spreadst.com>

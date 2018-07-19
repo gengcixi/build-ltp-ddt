@@ -1,0 +1,27 @@
+From 6239d1d4743ae48f6851044e2316e5882e350622 Mon Sep 17 00:00:00 2001
+From: cixi <gengcx@spreadst.com>
+Date: Thu, 19 Jul 2018 10:41:04 +0800
+Subject: [PATCH] common.sh:modify LTPPATH the correct path for ltp-ddt is
+ /opt/ltp-ddt
+
+Signed-off-by: cixi <gengcx@spreadst.com>
+---
+ testcases/ddt/scripts/common/common.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/testcases/ddt/scripts/common/common.sh b/testcases/ddt/scripts/common/common.sh
+index e58f3a7..cc6f14d 100755
+--- a/testcases/ddt/scripts/common/common.sh
++++ b/testcases/ddt/scripts/common/common.sh
+@@ -39,7 +39,7 @@ resolve_platform_name() {
+ 
+ if [ "x$SOC" == "x" ]
+ then
+-   LTPPATH='/opt/ltp'
++   LTPPATH='/opt/ltp-ddt'
+    export PATH="${PATH}:${LTPPATH}/testcases/bin"$( find ${LTPPATH}/testcases/bin/ddt -type d -exec printf ":"{} \; )
+    plat=`uname -a | cut -d' ' -f 2`
+    i=0; DRIVERS=""
+-- 
+1.9.1
+

@@ -1,7 +1,7 @@
-From 22265c45ae006f9904a57524130f91010f5f88ad Mon Sep 17 00:00:00 2001
+From 4f6c2e99dbab813dd2faa92b7eacb7f9c3de989a Mon Sep 17 00:00:00 2001
 From: cixi <gengcx@spreadst.com>
 Date: Mon, 16 Jul 2018 11:21:19 +0800
-Subject: [PATCH 3/3] st_filesystem_write_to_file.c:when has O_CREAT, the third
+Subject: [PATCH] st_filesystem_write_to_file.c:when has O_CREAT, the third
  parameter must be set for specify the file permission
 
 Signed-off-by: cixi <gengcx@spreadst.com>
