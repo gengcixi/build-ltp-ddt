@@ -1,4 +1,4 @@
-From e2ea140ab7fec7819158a62a5fac08a16778f640 Mon Sep 17 00:00:00 2001
+From 508f411afc8239187e045277aea3a54fbeb539c5 Mon Sep 17 00:00:00 2001
 From: cixi <gengcx@spreadst.com>
 Date: Thu, 19 Jul 2018 16:57:07 +0800
 Subject: [PATCH] get_modular_config_names.sh: add hikey module name
@@ -9,7 +9,7 @@ Signed-off-by: cixi <gengcx@spreadst.com>
  1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/testcases/ddt/scripts/common/get_modular_config_names.sh b/testcases/ddt/scripts/common/get_modular_config_names.sh
-index e18f9fe..e371302 100755
+index e18f9fe..4573710 100755
 --- a/testcases/ddt/scripts/common/get_modular_config_names.sh
 +++ b/testcases/ddt/scripts/common/get_modular_config_names.sh
 @@ -155,9 +155,14 @@ case $MACHINE in
@@ -21,10 +21,10 @@ index e18f9fe..e371302 100755
          usb='CONFIG_USB_STORAGE:usb-storage';;
 -
 +	hikey)
-+	usb='CONFIG_USB_STORAGE:usb-storage';;
-+	rtc='CONFIG_RTC_DRV_EFI:rtc-efi';;
-+	spi='CONFIG_SPI_MASTER:spi CONFIG_SPI_PL022:spi-pl022';;
-+	mmc='CONFIG_MMC_BLOCK:mmc_block CONFIG_MMC_ARMMMCI:armmmci CONFIG_MMC_SDHCI:sdhci CONFIG_MMC_SDHCI_PLTFM:sdhci-pltfm CONFIG_MMC_SPI:mmc_spi CONFIG_MMC_DW:dw_mmc CONFIG_MMC_DW_PLTFM:dw_mmc-pltfm CONFIG_MMC_DW_K3:dw_mmc-k3';;
++	usb='CONFIG_USB_STORAGE:usb-storage'
++	rtc='CONFIG_RTC_DRV_EFI:rtc-efi'
++	spi='CONFIG_SPI_MASTER:spi CONFIG_SPI_PL022:spi-pl022'
++	mmc='CONFIG_MMC_BLOCK:mmc_block CONFIG_MMC_ARMMMCI:armmmci CONFIG_MMC_SDHCI:sdhci CONFIG_MMC_SDHCI_PLTFM:sdhci-pltfm CONFIG_MMC_SPI:mmc_spi CONFIG_MMC_DW:dw_mmc CONFIG_MMC_DW_PLTFM:dw_mmc-pltfm CONFIG_MMC_DW_K3:dw_mmc-k3'
 +	sata='CONFIG_SATA_AHCI_PLATFORM:ahci_platform';;
  esac
  
