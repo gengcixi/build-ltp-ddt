@@ -36,7 +36,7 @@ cd $TOPDIR/ltp-ddt
 
 ## git apply patch 
 cd $TOPDIR/ltp-ddt 
-git reset --hard 19818e1
+git reset --hard 831ed83e49df467fb4a7d7ac00b1ae3c5e6961be
 git am -s < ${TOPDIR}/patches/0001-st_filesystem_write_to_file.c-when-has-O_CREAT-the-t.patch
 git am -s < ${TOPDIR}/patches/0001-st_filesystem_copy_file.c-when-has-O_CREAT-the-third.patch
 git am -s < ${TOPDIR}/patches/0001-st_alsa_capture_file_test.c-when-has-O_CREAT-the-thi.patch
