@@ -36,13 +36,13 @@ cd $TOPDIR/ltp-ddt
 
 ## git apply patch 
 cd $TOPDIR/ltp-ddt 
-git reset --hard 831ed83e49df467fb4a7d7ac00b1ae3c5e6961be
+#git reset --hard 831ed83e49df467fb4a7d7ac00b1ae3c5e6961be
+git reset --hard a41a20154f51ec1d869814bdc4893dcde158d5d1
+git pull
 git am -s < ${TOPDIR}/patches/0001-st_filesystem_write_to_file.c-when-has-O_CREAT-the-t.patch
 git am -s < ${TOPDIR}/patches/0001-st_filesystem_copy_file.c-when-has-O_CREAT-the-third.patch
 git am -s < ${TOPDIR}/patches/0001-st_alsa_capture_file_test.c-when-has-O_CREAT-the-thi.patch
-git am -s < ${TOPDIR}/patches/0001-get_modular_config_names.sh-add-hikey-module-name.patch
 git am -s < ${TOPDIR}/patches/0001-common.sh-modify-LTPPATH.patch
-git am -s < ${TOPDIR}/patches/0001-get_devnode.sh-add-judgment-if-device-not-exist.patch
 
  
 cd $TOPDIR/ltp-ddt
