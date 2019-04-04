@@ -45,12 +45,7 @@ function get_ltp-ddt_source_code()
     cp ${TOPDIR}/patches/default-ddt scenario_groups/default-ddt
     cp ${TOPDIR}/patches/plat/sprd/sharkl3 platforms/sharkl3-sprd
     git am -s < ${TOPDIR}/patches/0001-Fix-open-function-mode-argument-must-be-supplied.patch
-    git am -s < ${TOPDIR}/patches/0001-get_devnode.sh-add-judgment-if-device-not-exist.patch
-    git am -s < ${TOPDIR}/patches/0001-get_modular_config_names.sh-add-hikey-module-name.patch
-    git am -s < ${TOPDIR}/patches/0001-realtime-clean-up-cpuset-state-after-test-completion.patch
-    git am -s < ${TOPDIR}/patches/0001-ddt-uart-Activate-uart-port-before-checking-uartclk.patch
-    git am -s < ${TOPDIR}/patches/0002-ddt-uart-Remove-k-option-from-serialcheck-command-re.patch
-    git am -s < ${TOPDIR}/patches/0003-ddt-uart-Check-test-result-from-receiving-command.patch
+    #git am -s < ${TOPDIR}/patches/0001-realtime-clean-up-cpuset-state-after-test-completion.patch
 
 }
 
