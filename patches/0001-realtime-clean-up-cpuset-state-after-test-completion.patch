@@ -1,0 +1,221 @@
+From 1d2e5ed16451486330831513bed9e0cc3e5272b2 Mon Sep 17 00:00:00 2001
+From: Orson Zhai <orson.zhai@linaro.org>
+Date: Tue, 15 Jan 2019 15:19:43 +0800
+Subject: [PATCH] realtime: clean-up cpuset state after test completion
+
+We find cpuset state is not restored to original value after running
+realtime_* test cases.
+
+It will make following cpu_affinity test to fail.
+
+There is "unsheild_shell" exist in function.sh but never being used
+which maybe forgotten by the author.
+
+Signed-off-by: Orson Zhai <orson.zhai@linaro.org>
+---
+ runtest/ddt/realtime_graphics_load-smp   |  4 ++--
+ runtest/ddt/realtime_hackbench-smp       |  4 ++--
+ runtest/ddt/realtime_mem_load-smp        |  4 ++--
+ runtest/ddt/realtime_multimedia_load-smp | 10 +++++-----
+ runtest/ddt/realtime_net_load-smp        |  6 +++---
+ runtest/ddt/realtime_no_load-smp         |  6 +++---
+ runtest/ddt/realtime_pci_load-smp        |  4 ++--
+ runtest/ddt/realtime_sata_load-smp       |  4 ++--
+ runtest/ddt/realtime_stress_load-smp     |  4 ++--
+ runtest/ddt/realtime_uart_load-smp       |  4 ++--
+ runtest/ddt/realtime_usb_load-smp        |  4 ++--
+ runtest/ddt/realtime_usb_net_load-smp    |  4 ++--
+ runtest/ddt/realtime_v4l2cap_load-smp    |  4 ++--
+ 13 files changed, 31 insertions(+), 31 deletions(-)
+
+diff --git a/runtest/ddt/realtime_graphics_load-smp b/runtest/ddt/realtime_graphics_load-smp
+index 0f2f06c2e..9ddd2b1b1 100644
+--- a/runtest/ddt/realtime_graphics_load-smp
++++ b/runtest/ddt/realtime_graphics_load-smp
+@@ -3,6 +3,6 @@
+ # @requires graphics && smp
+ # @setup_requires
+ 
+-REALTIME_S_PERF_SHIELD_SMP_GRAPHICS source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency graphics`; multi_run_processes.sh -s "timeout -t 240 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/sgx -s SGX_S_FUNC_OGLES2CHAMELEONMAN; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 3m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_GRAPHICS source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency graphics`; multi_run_processes.sh -s "timeout -t 240 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/sgx -s SGX_S_FUNC_OGLES2CHAMELEONMAN; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 3m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_GRAPHICS source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency graphics`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/sgx -s SGX_L_FUNC_OGLES2CHAMELEONMAN; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
++REALTIME_L_PERF_SHIELD_SMP_GRAPHICS source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency graphics`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/sgx -s SGX_L_FUNC_OGLES2CHAMELEONMAN; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+diff --git a/runtest/ddt/realtime_hackbench-smp b/runtest/ddt/realtime_hackbench-smp
+index 11b4f8511..c38d97bf9 100644
+--- a/runtest/ddt/realtime_hackbench-smp
++++ b/runtest/ddt/realtime_hackbench-smp
+@@ -3,6 +3,6 @@
+ # @requires armv* && smp
+ # @setup_requires
+ 
+-REALTIME_S_PERF_SHIELD_SMP_HACKBENCH source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency hackbench`; multi_run_processes.sh -s "timeout -t 120 -s 9 sh -c 'while true; do hackbench; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_HACKBENCH source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency hackbench`; multi_run_processes.sh -s "timeout -t 120 -s 9 sh -c 'while true; do hackbench; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_HACKBENCH source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency hackbench`; multi_run_processes.sh -s "timeout -t 14400 -s 9 sh -c 'while true; do hackbench; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
++REALTIME_L_PERF_SHIELD_SMP_HACKBENCH source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency hackbench`; multi_run_processes.sh -s "timeout -t 14400 -s 9 sh -c 'while true; do hackbench; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+diff --git a/runtest/ddt/realtime_mem_load-smp b/runtest/ddt/realtime_mem_load-smp
+index bc439ebe8..e931a81cd 100644
+--- a/runtest/ddt/realtime_mem_load-smp
++++ b/runtest/ddt/realtime_mem_load-smp
+@@ -4,6 +4,6 @@
+ # @setup_requires
+ # @notes size for mem load 8*1024*1024=8388608
+ 
+-REALTIME_S_PERF_SHIELD_SMP_MEM source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency mem`; multi_run_processes.sh -s "timeout -t 120 -s 9 sh -c 'while true; do ${LTPROOT}/testcases/bin/genload --vm 2 --vm-chunks 1 --vm-bytes 8388608; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_MEM source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency mem`; multi_run_processes.sh -s "timeout -t 120 -s 9 sh -c 'while true; do ${LTPROOT}/testcases/bin/genload --vm 2 --vm-chunks 1 --vm-bytes 8388608; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_MEM source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency mem`; multi_run_processes.sh -s "timeout -t 14400 -s 9 sh -c 'while true; do ${LTPROOT}/testcases/bin/genload --vm 2 --vm-chunks 1 --vm-bytes 8388608; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
+\ No newline at end of file
++REALTIME_L_PERF_SHIELD_SMP_MEM source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency mem`; multi_run_processes.sh -s "timeout -t 14400 -s 9 sh -c 'while true; do ${LTPROOT}/testcases/bin/genload --vm 2 --vm-chunks 1 --vm-bytes 8388608; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+diff --git a/runtest/ddt/realtime_multimedia_load-smp b/runtest/ddt/realtime_multimedia_load-smp
+index 798d8a392..739173d95 100644
+--- a/runtest/ddt/realtime_multimedia_load-smp
++++ b/runtest/ddt/realtime_multimedia_load-smp
+@@ -3,12 +3,12 @@
+ # @requires smp
+ # @setup_requires
+ 
+-REALTIME_S_PERF_SHIELD_SMP_MULTIMEDIA source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency multimedia`; multi_run_processes.sh -s "timeout -t 240 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/gst_video -s VIDEO_S_FUNC_GST_MP4_480P; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 3m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_MULTIMEDIA source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency multimedia`; multi_run_processes.sh -s "timeout -t 240 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/gst_video -s VIDEO_S_FUNC_GST_MP4_480P; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 3m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_MULTIMEDIA source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency multimedia`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/gst_video -s VIDEO_S_FUNC_GST_MP4_480P; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
++REALTIME_L_PERF_SHIELD_SMP_MULTIMEDIA source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency multimedia`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/gst_video -s VIDEO_S_FUNC_GST_MP4_480P; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+ 
+-REALTIME_S_PERF_SHIELD_SMP_1080DEC source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency multimedia`; multi_run_processes.sh -s "timeout -t 240 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/gst_dec -s GST_S_DEC_H264_1080p_60FPS_MP4; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 3m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_1080DEC source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency multimedia`; multi_run_processes.sh -s "timeout -t 240 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/gst_dec -s GST_S_DEC_H264_1080p_60FPS_MP4; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 3m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_1080ENC source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency multimedia`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/gst_capture -s GST_S_CAP_MPEG4_1920x1080; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
++REALTIME_L_PERF_SHIELD_SMP_1080ENC source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency multimedia`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/gst_capture -s GST_S_CAP_MPEG4_1920x1080; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_1080ENCDEC source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency multimedia`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/gst_video -s VIDEO_M_FUNC_GST_H264_1080_ENCDEC; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
+\ No newline at end of file
++REALTIME_L_PERF_SHIELD_SMP_1080ENCDEC source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency multimedia`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/gst_video -s VIDEO_M_FUNC_GST_H264_1080_ENCDEC; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+diff --git a/runtest/ddt/realtime_net_load-smp b/runtest/ddt/realtime_net_load-smp
+index a7fc5d0b7..921ed1c85 100644
+--- a/runtest/ddt/realtime_net_load-smp
++++ b/runtest/ddt/realtime_net_load-smp
+@@ -4,8 +4,8 @@
+ # @setup_requires
+ # @notes iperf server need to be started in NFS host pc before run net_load test
+ 
+-REALTIME_S_PERF_SHIELD_SMP_PING source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; NFS_HOST=`get_nfs_host.sh`; source 'board_requirements.sh'; latency=`get_acceptable_latency net`; multi_run_processes.sh -s "timeout -t 120 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/eth_ping -s ETH_S_FUNC_PING_300S; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_PING source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; NFS_HOST=`get_nfs_host.sh`; source 'board_requirements.sh'; latency=`get_acceptable_latency net`; multi_run_processes.sh -s "timeout -t 120 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/eth_ping -s ETH_S_FUNC_PING_300S; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_S_PERF_SHIELD_SMP_NET source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency net`; multi_run_processes.sh -s "timeout -t 115 -s 9 sh -c 'while true; do run_iperf.sh -m -M 1500 -f M -d -t 110 -w 8K; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_NET source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency net`; multi_run_processes.sh -s "timeout -t 115 -s 9 sh -c 'while true; do run_iperf.sh -m -M 1500 -f M -d -t 110 -w 8K; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_NET source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency net`; multi_run_processes.sh -s "timeout -t 14400 -s 9 sh -c 'while true; do run_iperf.sh -m -M 1500 -f M -d -t 14380 -w 128K; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
++REALTIME_L_PERF_SHIELD_SMP_NET source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency net`; multi_run_processes.sh -s "timeout -t 14400 -s 9 sh -c 'while true; do run_iperf.sh -m -M 1500 -f M -d -t 14380 -w 128K; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+diff --git a/runtest/ddt/realtime_no_load-smp b/runtest/ddt/realtime_no_load-smp
+index 5e71a3281..a65fed68b 100644
+--- a/runtest/ddt/realtime_no_load-smp
++++ b/runtest/ddt/realtime_no_load-smp
+@@ -3,8 +3,8 @@
+ # @requires armv*
+ # @setup_requires
+ 
+-REALTIME_S_PERF_SHIELD_SMP_NO_LOAD source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency noload`; multi_run_processes.sh -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_NO_LOAD source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency noload`; multi_run_processes.sh -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_NO_LOAD source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency noload`; multi_run_processes.sh -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
++REALTIME_L_PERF_SHIELD_SMP_NO_LOAD source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency noload`; multi_run_processes.sh -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+ 
+-REALTIME_XL_PERF_SHIELD_SMP_OSADL source 'functions.sh'; cyclictest -l100000000 -m -Sp99 -i200 -h400 -q
+\ No newline at end of file
++REALTIME_XL_PERF_SHIELD_SMP_OSADL source 'functions.sh'; cyclictest -l100000000 -m -Sp99 -i200 -h400 -q
+diff --git a/runtest/ddt/realtime_pci_load-smp b/runtest/ddt/realtime_pci_load-smp
+index 12bd0666c..c65ce5831 100644
+--- a/runtest/ddt/realtime_pci_load-smp
++++ b/runtest/ddt/realtime_pci_load-smp
+@@ -3,6 +3,6 @@
+ # @requires (pci || pcie) && smp
+ # @setup_requires pcisatacard
+ 
+-REALTIME_S_PERF_SHIELD_SMP_PCI source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency pci`; multi_run_processes.sh -s "timeout -t 360 -s 9 sh -c '${LTPROOT}/runltp -P $PLATFORM -f ddt/pci_sata_perf -s PCI_L_PERF_SATA_EXT2_100M'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 5m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_PCI source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency pci`; multi_run_processes.sh -s "timeout -t 360 -s 9 sh -c '${LTPROOT}/runltp -P $PLATFORM -f ddt/pci_sata_perf -s PCI_L_PERF_SATA_EXT2_100M'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 5m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_PCI source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency pci`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/pci_sata_perf -s PCI_L_PERF_SATA_EXT2_100M; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
++REALTIME_L_PERF_SHIELD_SMP_PCI source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency pci`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/pci_sata_perf -s PCI_L_PERF_SATA_EXT2_100M; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+diff --git a/runtest/ddt/realtime_sata_load-smp b/runtest/ddt/realtime_sata_load-smp
+index 8e9924bbb..417a50f59 100644
+--- a/runtest/ddt/realtime_sata_load-smp
++++ b/runtest/ddt/realtime_sata_load-smp
+@@ -3,6 +3,6 @@
+ # @requires sata && smp
+ # @setup_requires sata
+ 
+-REALTIME_S_PERF_SHIELD_SMP_SATA source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency sata`; multi_run_processes.sh -s "timeout -t 240 -s 9 sh -c '${LTPROOT}/runltp -P $PLATFORM -f ddt/sata_perf_ext4 -s SATA_S_PERF_EXT4_10M'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 3m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_SATA source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency sata`; multi_run_processes.sh -s "timeout -t 240 -s 9 sh -c '${LTPROOT}/runltp -P $PLATFORM -f ddt/sata_perf_ext4 -s SATA_S_PERF_EXT4_10M'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 3m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_SATA source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency sata`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/sata_stress_dd_rw_ext2 -s SATA_L_STRESS_EXT2_DD_RW_100M; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
++REALTIME_L_PERF_SHIELD_SMP_SATA source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency sata`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/sata_stress_dd_rw_ext2 -s SATA_L_STRESS_EXT2_DD_RW_100M; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+diff --git a/runtest/ddt/realtime_stress_load-smp b/runtest/ddt/realtime_stress_load-smp
+index be9ea731a..0be120423 100644
+--- a/runtest/ddt/realtime_stress_load-smp
++++ b/runtest/ddt/realtime_stress_load-smp
+@@ -4,6 +4,6 @@
+ # @setup_requires
+ # @notes iperf server need to be started in NFS host pc before run net_load test
+ 
+-REALTIME_S_PERF_SHIELD_SMP_STRESS_LOAD source 'functions.sh'; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; shield_shell; source 'board_requirements.sh'; NFS_HOST=`get_nfs_host.sh`; latency=`get_acceptable_latency stress`; multi_run_processes.sh -s "timeout -t 120 -s 9 sh -c 'while true; do hackbench; done'  || true" -l "-n 1" -s "timeout -t 120 -s 9 sh -c 'while true; do ${LTPROOT}/testcases/bin/genload --vm 2 --vm-chunks 1 --vm-bytes 8388608; done'  || true" -l "-n 1" -s "timeout -t 120 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/eth_ping -s ETH_S_FUNC_PING_300S; done'  || true" -l "-n 1" -s "timeout -t 120 -s 9 sh -c 'while true; do stress --cpu 4; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_STRESS_LOAD source 'functions.sh'; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; shield_shell; source 'board_requirements.sh'; NFS_HOST=`get_nfs_host.sh`; latency=`get_acceptable_latency stress`; multi_run_processes.sh -s "timeout -t 120 -s 9 sh -c 'while true; do hackbench; done'  || true" -l "-n 1" -s "timeout -t 120 -s 9 sh -c 'while true; do ${LTPROOT}/testcases/bin/genload --vm 2 --vm-chunks 1 --vm-bytes 8388608; done'  || true" -l "-n 1" -s "timeout -t 120 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/eth_ping -s ETH_S_FUNC_PING_300S; done'  || true" -l "-n 1" -s "timeout -t 120 -s 9 sh -c 'while true; do stress --cpu 4; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_STRESS_LOAD source 'functions.sh'; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; shield_shell; source 'board_requirements.sh'; NFS_HOST=`get_nfs_host.sh`; latency=`get_acceptable_latency stress`; multi_run_processes.sh -s "timeout -t 14400 -s 9 sh -c 'while true; do hackbench; done'  || true" -l "-n 1" -s "timeout -t 14400 -s 9 sh -c 'while true; do ${LTPROOT}/testcases/bin/genload --vm 2 --vm-chunks 1 --vm-bytes 8388608; done'  || true" -l "-n 1" -s "timeout -t 14400 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/eth_ping -s ETH_S_FUNC_PING_300S; done'  || true" -l "-n 1" -s "timeout -t 14400 -s 9 sh -c 'while true; do stress --cpu 4; done'  || true" -l "-n 1"  -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
++REALTIME_L_PERF_SHIELD_SMP_STRESS_LOAD source 'functions.sh'; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; shield_shell; source 'board_requirements.sh'; NFS_HOST=`get_nfs_host.sh`; latency=`get_acceptable_latency stress`; multi_run_processes.sh -s "timeout -t 14400 -s 9 sh -c 'while true; do hackbench; done'  || true" -l "-n 1" -s "timeout -t 14400 -s 9 sh -c 'while true; do ${LTPROOT}/testcases/bin/genload --vm 2 --vm-chunks 1 --vm-bytes 8388608; done'  || true" -l "-n 1" -s "timeout -t 14400 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/eth_ping -s ETH_S_FUNC_PING_300S; done'  || true" -l "-n 1" -s "timeout -t 14400 -s 9 sh -c 'while true; do stress --cpu 4; done'  || true" -l "-n 1"  -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+diff --git a/runtest/ddt/realtime_uart_load-smp b/runtest/ddt/realtime_uart_load-smp
+index ad30500fc..ebd41138e 100644
+--- a/runtest/ddt/realtime_uart_load-smp
++++ b/runtest/ddt/realtime_uart_load-smp
+@@ -3,6 +3,6 @@
+ # @requires smp
+ # @setup_requires
+ 
+-REALTIME_S_PERF_SHIELD_SMP_UART source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency uart`; multi_run_processes.sh -s "timeout -t 115 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/uart -s 'UART_S_FUNC_1152000'; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_UART source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency uart`; multi_run_processes.sh -s "timeout -t 115 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/uart -s 'UART_S_FUNC_1152000'; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_UART source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency uart`; multi_run_processes.sh -s "timeout -t 14380 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/uart -s 'UART_L_STRESS_3500000'; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
+\ No newline at end of file
++REALTIME_L_PERF_SHIELD_SMP_UART source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency uart`; multi_run_processes.sh -s "timeout -t 14380 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/uart -s 'UART_L_STRESS_3500000'; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+diff --git a/runtest/ddt/realtime_usb_load-smp b/runtest/ddt/realtime_usb_load-smp
+index d969ee5ef..60b24d2ec 100644
+--- a/runtest/ddt/realtime_usb_load-smp
++++ b/runtest/ddt/realtime_usb_load-smp
+@@ -3,6 +3,6 @@
+ # @requires (usb/host || usbxhci/host) && smp
+ # @setup_requires usbhostmsc
+ 
+-REALTIME_S_PERF_SHIELD_SMP_USB source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency usb`; multi_run_processes.sh -s "timeout -t 120 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/usbhost_perf_vfat -s USBHOST_L_PERF_VFAT_0001; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_USB source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency usb`; multi_run_processes.sh -s "timeout -t 120 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/usbhost_perf_vfat -s USBHOST_L_PERF_VFAT_0001; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_USB source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency usb`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/usbhost_perf_vfat -s USBHOST_L_PERF_VFAT_0001; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
++REALTIME_L_PERF_SHIELD_SMP_USB source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency usb`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/usbhost_perf_vfat -s USBHOST_L_PERF_VFAT_0001; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+diff --git a/runtest/ddt/realtime_usb_net_load-smp b/runtest/ddt/realtime_usb_net_load-smp
+index 57489d270..8c9889732 100644
+--- a/runtest/ddt/realtime_usb_net_load-smp
++++ b/runtest/ddt/realtime_usb_net_load-smp
+@@ -4,6 +4,6 @@
+ # @setup_requires
+ # @notes iperf server need to be started in host pc before run net_load test
+ 
+-REALTIME_S_PERF_SHIELD_SMP_USB_NET source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency usb`; multi_run_processes.sh -s "timeout -t 120 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/usbhost_perf_vfat -s USBHOST_L_PERF_VFAT_0001; done'  || true" -l "-n 1" -s "timeout -t 115 -s 9 sh -c 'while true; do run_iperf.sh -m -M 1500 -f M -d -t 110 -w 8K; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_USB_NET source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency usb`; multi_run_processes.sh -s "timeout -t 120 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/usbhost_perf_vfat -s USBHOST_L_PERF_VFAT_0001; done'  || true" -l "-n 1" -s "timeout -t 115 -s 9 sh -c 'while true; do run_iperf.sh -m -M 1500 -f M -d -t 110 -w 8K; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_USB_NET source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency usb`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/usbhost_perf_vfat -s USBHOST_L_PERF_VFAT_0001; done'  || true" -l "-n 1" -s "timeout -t 14400 -s 9 sh -c 'while true; do run_iperf.sh -m -M 1500 -f M -d -t 14380 -w 128K; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
++REALTIME_L_PERF_SHIELD_SMP_USB_NET source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency usb`; multi_run_processes.sh -s "timeout -t 14440 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/usbhost_perf_vfat -s USBHOST_L_PERF_VFAT_0001; done'  || true" -l "-n 1" -s "timeout -t 14400 -s 9 sh -c 'while true; do run_iperf.sh -m -M 1500 -f M -d -t 14380 -w 128K; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+diff --git a/runtest/ddt/realtime_v4l2cap_load-smp b/runtest/ddt/realtime_v4l2cap_load-smp
+index 4de1c1b61..144b61335 100644
+--- a/runtest/ddt/realtime_v4l2cap_load-smp
++++ b/runtest/ddt/realtime_v4l2cap_load-smp
+@@ -3,6 +3,6 @@
+ # @requires video/capture/*/v4l2 && smp
+ # @setup_requires
+ 
+-REALTIME_S_PERF_SHIELD_SMP_V4L2CAP source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency v4l2cap`; multi_run_processes.sh -s "timeout -t 115 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/v4l2_cap_func -s V4L2CAP_S_FUNC_CAP; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"
++REALTIME_S_PERF_SHIELD_SMP_V4L2CAP source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency v4l2cap`; multi_run_processes.sh -s "timeout -t 115 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/v4l2_cap_func -s V4L2CAP_S_FUNC_CAP; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 2m" -l "-n 1"; unshield_shell
+ 
+-REALTIME_L_PERF_SHIELD_SMP_V4L2CAP source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency v4l2cap`; multi_run_processes.sh -s "timeout -t 14380 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/v4l2_cap_func -s V4L2CAP_S_FUNC_CAP; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"
++REALTIME_L_PERF_SHIELD_SMP_V4L2CAP source 'functions.sh'; shield_shell; max_id=`cat /sys/devices/system/cpu/online | cut -d '-' -f 2`; source 'board_requirements.sh'; latency=`get_acceptable_latency v4l2cap`; multi_run_processes.sh -s "timeout -t 14380 -s 9 sh -c 'while true; do ${LTPROOT}/runltp -P $PLATFORM -f ddt/v4l2_cap_func -s V4L2CAP_S_FUNC_CAP; sleep 5; done'  || true" -l "-n 1" -s "run_cyclictest $latency -a$max_id -t1 -i200 -p98 -m -n -q -D 4h" -l "-n 1"; unshield_shell
+-- 
+2.18.0
+

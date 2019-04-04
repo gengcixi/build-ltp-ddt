@@ -1,0 +1,36 @@
+From 06577a7ff4c748b2b58a82c2dc3e65517a620ad2 Mon Sep 17 00:00:00 2001
+From: Orson Zhai <orson.zhai@linaro.org>
+Date: Wed, 28 Nov 2018 09:02:20 +0800
+Subject: [PATCH 1/3] ddt/uart: Activate uart port before checking uartclk
+
+Some of uart drivers, such as ARM PL011, are activated at startup time.
+That means uartclk will be 0 before anyone open the port to read or write.
+Test process will wrongly ignore these uarts for test.
+
+Write some bytes to activate the uart which may be ready for test.
+
+Signed-off-by: Orson Zhai <orson.zhai@linaro.org>
+---
+ testcases/ddt/scripts/uart/serialcheck.sh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/testcases/ddt/scripts/uart/serialcheck.sh b/testcases/ddt/scripts/uart/serialcheck.sh
+index 96f907602..fbe284e2e 100644
+--- a/testcases/ddt/scripts/uart/serialcheck.sh
++++ b/testcases/ddt/scripts/uart/serialcheck.sh
+@@ -34,8 +34,11 @@ create_test_file() {
+ 
+ get_uart_ports() {
+ for i in ${ARRAY[@]}; do
++    PORT=/dev/`echo $i | cut -d'/' -f 5`
++    # Activate port in case it will be initialized only when startup 
++    echo "DDT TESTING" > $PORT 2>/dev/null
+     if [ `cat $i` -ne 0 ]; then
+-        UART_PORTS=("${UART_PORTS[@]}" /dev/`echo $i | cut -d'/' -f 5 `)
++        UART_PORTS=("${UART_PORTS[@]}" "$PORT")
+     fi
+ done
+ }
+-- 
+2.18.0
+

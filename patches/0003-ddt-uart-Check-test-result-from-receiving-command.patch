@@ -1,0 +1,45 @@
+From 034532a021568e73ca6ab595c44f45fb87f09d70 Mon Sep 17 00:00:00 2001
+From: Orson Zhai <orson.zhai@linaro.org>
+Date: Thu, 29 Nov 2018 15:23:41 +0800
+Subject: [PATCH 3/3] ddt/uart: Check test result from receiving command
+
+For serialcheck command, '-m r' means receiving and '-m t' means sending.
+It does not make any sense to check the result of sending command which may
+always pass even if the uart port is not working.
+
+Swap the logic as sending in background then verify receiving result.
+Also add kill command to clean useless processes.
+
+Signed-off-by: Orson Zhai <orson.zhai@linaro.org>
+---
+ testcases/ddt/scripts/uart/serialcheck.sh | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/testcases/ddt/scripts/uart/serialcheck.sh b/testcases/ddt/scripts/uart/serialcheck.sh
+index 9923ba08f..714c4b276 100644
+--- a/testcases/ddt/scripts/uart/serialcheck.sh
++++ b/testcases/ddt/scripts/uart/serialcheck.sh
+@@ -53,14 +53,14 @@ run_serial_check() {
+     for i in ${PORTS_TO_TEST[@]}; do    
+         if [ $UART_HWFLOW -eq 0 ]; then
+             echo ''; echo "Testing $i in loopback at $UART_RATE $UART_LOOPS times"
+-            serialcheck -b $UART_RATE -d $i -f $temp_test_file -l $UART_LOOPS -m r &
+-            sleep 1
+-            serialcheck -b $UART_RATE -d $i -f $temp_test_file -l $UART_LOOPS -m t || die "TEST FAILED"
++            { sleep 1; serialcheck -b $UART_RATE -d $i -f $temp_test_file -l $UART_LOOPS -m t; }&
++            PID=$!
++            serialcheck -b $UART_RATE -d $i -f $temp_test_file -l $UART_LOOPS -m r || { kill -- -$PID 2>/dev/null; die "TEST FAILED"; }
+         else
+             echo ''; echo "Testing $i with HW flow control at $UART_RATE $UART_LOOPS times"
+-            serialcheck -b $UART_RATE -d $i -f $temp_test_file -l $UART_LOOPS -m r -h &
+-            sleep 1
+-            serialcheck -b $UART_RATE -d $i -f $temp_test_file -l $UART_LOOPS -m t -h || die "TEST FAILED"
++            { sleep 1; serialcheck -b $UART_RATE -d $i -f $temp_test_file -l $UART_LOOPS -m t -h; } &
++            PID=$!
++            serialcheck -b $UART_RATE -d $i -f $temp_test_file -l $UART_LOOPS -m r -h || { kill -- -$PID 2>/dev/null; die "TEST FAILED"; }
+         fi
+     done
+     rm $temp_test_file
+-- 
+2.18.0
+
