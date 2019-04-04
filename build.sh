@@ -1,16 +1,30 @@
 #!/bin/bash
 
 TOPDIR=$(dirname `readlink -f $0`)
-ARCH=$1
-ENVDIR=${TOPDIR}/alsa/${ARCH}/usr
-OUTPUTDIR=${TOPDIR}/output/${ARCH}
 
-if [ "${ARCH}" == "arm64" ];then 
-    CROSS_COMPILE=aarch64-linux-gnu-
-elif [ "${ARCH}" == "arm" ];then
-    CROSS_COMPILE=arm-linux-gnueabi-
-fi 
+if [ "$1" ] ; then
+    ARCH=$1
+else
+    echo  "You must specify the architecture: "
+    echo  "please run as: ./build.sh arm |arm64"
+    exit
+fi
+echo ${ARCH}
+case ${ARCH} in
+	arm)
+		CROSS_COMPILE=arm-linux-gnueabihf-
+		;;
+	arm64)
+		CROSS_COMPILE=aarch64-linux-gnu-
+		;;
+	*)
+		echo "Can't find the architecture: ${ARCH}"
+		exit 0
+		;;
+esac
 
+export    ENVDIR=${TOPDIR}/alsa/${ARCH}/usr
+export    OUTPUTDIR=${TOPDIR}/output/${ARCH}
 export	  ALSA_INCPATH=${ENVDIR}/include
 export	  ALSA_LIBPATH=${ENVDIR}/lib
 
@@ -27,20 +41,21 @@ function get_ltp-ddt_source_code()
     fi
     cd $TOPDIR/ltp-ddt
     git pull && git checkout .
- 
-    #git am -s < ${TOPDIR}/patches/0001-Fix-open-function-mode-argument-must-be-supplied.patch
-    #git am -s < ${TOPDIR}/patches/0001-get_devnode.sh-add-judgment-if-device-not-exist.patch
-    #git am -s < ${TOPDIR}/patches/0001-get_modular_config_names.sh-add-hikey-module-name.patch
-    #git am -s < ${TOPDIR}/patches/0001-realtime-clean-up-cpuset-state-after-test-completion.patch
-    #git am -s < ${TOPDIR}/patches/0001-ddt-uart-Activate-uart-port-before-checking-uartclk.patch
-    #git am -s < ${TOPDIR}/patches/0002-ddt-uart-Remove-k-option-from-serialcheck-command-re.patch
-    #git am -s < ${TOPDIR}/patches/0003-ddt-uart-Check-test-result-from-receiving-command.patch
+    cp ${TOPDIR}/patches/default-ddt ltp-ddt/scenario_groups/default-ddt
+    git am -s < ${TOPDIR}/patches/0001-Fix-open-function-mode-argument-must-be-supplied.patch
+    git am -s < ${TOPDIR}/patches/0001-get_devnode.sh-add-judgment-if-device-not-exist.patch
+    git am -s < ${TOPDIR}/patches/0001-get_modular_config_names.sh-add-hikey-module-name.patch
+    git am -s < ${TOPDIR}/patches/0001-realtime-clean-up-cpuset-state-after-test-completion.patch
+    git am -s < ${TOPDIR}/patches/0001-ddt-uart-Activate-uart-port-before-checking-uartclk.patch
+    git am -s < ${TOPDIR}/patches/0002-ddt-uart-Remove-k-option-from-serialcheck-command-re.patch
+    git am -s < ${TOPDIR}/patches/0003-ddt-uart-Check-test-result-from-receiving-command.patch
 
 }
 
 function compile_ltp-ddt()
 {
     cd $TOPDIR/ltp-ddt
+
     make O=$OUTPUTDIR autotools
     platform_file=hikey
     if [ "${ARCH}" == "arm64" ];then
