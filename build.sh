@@ -40,8 +40,10 @@ function get_ltp-ddt_source_code()
         git clone http://arago-project.org/git/projects/test-automation/ltp-ddt.git
     fi
     cd $TOPDIR/ltp-ddt
+    find ./* -maxdepth 1 -name "conf*" -type d |xargs rm -rf
     git pull && git checkout .
-    cp ${TOPDIR}/patches/default-ddt ltp-ddt/scenario_groups/default-ddt
+    cp ${TOPDIR}/patches/default-ddt scenario_groups/default-ddt
+    cp ${TOPDIR}/patches/plat/sprd/sharkl3 platforms/sharkl3-sprd
     git am -s < ${TOPDIR}/patches/0001-Fix-open-function-mode-argument-must-be-supplied.patch
     git am -s < ${TOPDIR}/patches/0001-get_devnode.sh-add-judgment-if-device-not-exist.patch
     git am -s < ${TOPDIR}/patches/0001-get_modular_config_names.sh-add-hikey-module-name.patch
